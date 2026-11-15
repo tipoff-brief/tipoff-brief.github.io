@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Akros Systems | Tipoff permit briefs for contractors</title>
+  <meta name="description" content="Akros Systems builds Tipoff, a weekly brief of new residential building permits for home-service contractors. Filtered to your trade and ZIP codes.">
+  <link rel="canonical" href="https://tipoff-brief.github.io/">
+  <meta name="theme-color" content="#0d2635">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Akros Systems | Tipoff permit briefs for contractors">
+  <meta property="og:description" content="See new residential permits for your trade and ZIP codes before the job goes out to bid.">
+  <meta property="og:url" content="https://tipoff-brief.github.io/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Akros Systems | Tipoff permit briefs for contractors">
+  <meta name="twitter:description" content="A weekly brief of new residential building permits, filtered to your trade and ZIP codes.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230d2635'/%3E%3Cpath d='M13 45 32 17l19 28' fill='none' stroke='%23f05a28' stroke-width='5'/%3E%3Cpath d='M22 45h20' stroke='%23f7fbfc' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #e7eef1;
+      --sheet: #f7fbfc;
+      --ink: #0d2635;
+      --blue: #164b63;
+      --blue-deep: #103747;
+      --line: #a9c0ca;
+      --muted: #4d6875;
+      --orange: #f05a28;
+      --orange-deep: #c84318;
+      --stamp: #a83b2b;
+      --pad: clamp(20px, 4vw, 52px);
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image:
+        linear-gradient(rgba(22, 75, 99, .055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 75, 99, .055) 1px, transparent 1px);
+      background-size: 48px 48px;
+      font: 400 17px/1.55 "Barlow", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--orange); color: var(--ink); }
+    a { color: inherit; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--orange); outline-offset: 4px; }
+    .skip-link {
+      position: absolute; left: 16px; top: -80px; z-index: 100;
+      background: var(--orange); color: var(--ink); padding: 10px 14px; font-weight: 600;
+    }
+    .skip-link:focus { top: 12px; }
+    .wrap { width: min(calc(100% - (var(--pad) * 2)), var(--max)); margin: 0 auto; }
+    .site-header {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(231, 238, 241, .94);
+      border-bottom: 1px solid var(--ink);
+      backdrop-filter: blur(8px);
+    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 70px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; }
+    .brand-mark { width: 34px; height: 34px; display: block; flex: none; }
+    .brand-name { font: 700 21px/.9 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: .045em; text-transform: uppercase; }
+    .brand-name span { display: block; margin-top: 4px; font: 500 10px/1 "Barlow", sans-serif; letter-spacing: .2em; color: var(--muted); }
+    .site-nav { display: flex; align-items: center; gap: 25px; }
+    .site-nav a { font: 500 14px/1 "Barlow", sans-serif; text-decoration: none; color: var(--ink); }
+    .site-nav a:hover { color: var(--orange-deep); }
+    .site-nav .nav-cta {
+      border: 1px solid var(--ink); padding: 10px 14px; background: var(--sheet);
+      box-shadow: 3px 3px 0 var(--orange);
+    }
+    .site-nav .nav-cta:hover { background: var(--ink); color: var(--sheet); }
+    .hero { padding: clamp(58px, 9vw, 104px) 0 clamp(50px, 7vw, 84px); display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(300px, .88fr); gap: clamp(40px, 7vw, 92px); align-items: center; }
+    .category { margin: 0 0 24px; font: 600 12px/1.3 "Barlow", sans-serif; letter-spacing: .13em; color: var(--blue); text-transform: uppercase; }
+    .category::before { content: ""; display: inline-block; width: 22px; height: 7px; margin-right: 10px; background: var(--orange); vertical-align: 2px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 25px; font: 700 clamp(56px, 8.4vw, 104px)/.88 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.025em; max-width: 10ch; }
+    .hero-lede { max-width: 57ch; margin-bottom: 30px; font-size: clamp(18px, 2vw, 21px); line-height: 1.5; color: #234453; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 23px; margin-bottom: 26px; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 48px; padding: 12px 19px;
+      border: 2px solid var(--ink); background: var(--ink); color: var(--sheet);
+      font: 600 15px/1.1 "Barlow", sans-serif; text-decoration: none;
+      box-shadow: 5px 5px 0 var(--orange);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .button:hover { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--orange); }
+    .text-link { font: 600 15px/1.3 "Barlow", sans-serif; text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+    .text-link:hover { color: var(--orange-deep); }
+    .hero-note { margin: 0; font-size: 13px; color: var(--muted); }
+    .plan-wrap { position: relative; padding: 14px 14px 0 0; }
+    .sheet-label { margin: 0 0 9px; font: 500 11px/1.2 "Barlow", sans-serif; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+    .brief-card {
+      position: relative; isolation: isolate; overflow: hidden;
+      border: 2px solid var(--ink); background: var(--sheet); color: var(--ink);
+      box-shadow: 13px 13px 0 var(--blue);
+      transform: rotate(1.1deg);
+      animation: sheet-in .8s cubic-bezier(.2, .75, .2, 1) both;
+    }
+    .brief-card::before {
+      content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+      background-image: linear-gradient(rgba(22, 75, 99, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(22, 75, 99, .06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .brief-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 18px; background: var(--ink); color: var(--sheet); font: 500 10px/1.2 "Barlow", sans-serif; letter-spacing: .15em; text-transform: uppercase; }
+    .brief-top span:last-child { color: var(--orange); }
+    .brief-body { padding: 25px 24px 21px; }
+    .brief-kicker { margin: 0 0 7px; font: 600 11px/1.2 "Barlow", sans-serif; letter-spacing: .12em; color: var(--orange-deep); text-transform: uppercase; }
+    .brief-body h2 { margin: 0 0 18px; font: 700 38px/.94 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.01em; }
+    .brief-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; margin: 0; padding: 17px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .brief-fields div { min-width: 0; }
+    .brief-fields dt { margin-bottom: 3px; font: 500 10px/1.2 "Barlow", sans-serif; letter-spacing: .11em; color: var(--muted); text-transform: uppercase; }
+    .brief-fields dd { margin: 0; font: 600 16px/1.25 "Barlow", sans-serif; }
+    .brief-foot { display: flex; justify-content: space-between; gap: 14px; align-items: flex-end; padding-top: 17px; }
+    .brief-foot p { max-width: 21ch; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .stamp { position: absolute; right: 15px; bottom: 55px; z-index: 2; padding: 4px 9px 3px; border: 3px double var(--stamp); color: var(--stamp); font: 700 25px/.9 "Barlow Condensed", sans-serif; letter-spacing: .09em; transform: rotate(-12deg); opacity: .88; animation: stamp-in .42s .42s cubic-bezier(.2, .8, .2, 1) both; }
+    .brief-caption { margin: 22px 0 0; max-width: 43ch; font-size: 12px; line-height: 1.4; color: var(--muted); }
+    .rule { border-top: 1px solid var(--ink); }
+    .section { position: relative; padding: clamp(58px, 7vw, 88px) 0; border-top: 1px solid var(--line); }
+    .folio { position: absolute; right: 0; top: 27px; margin: 0; color: var(--muted); font: 500 12px/1 "Barlow", sans-serif; letter-spacing: .05em; }
+    .section-head { max-width: 760px; margin-bottom: 37px; }
+    .section-head h2 { margin-bottom: 16px; font: 700 clamp(38px, 5.2vw, 60px)/.94 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.018em; }
+    .section-head p { max-width: 65ch; margin-bottom: 0; color: #2b4b59; font-size: 18px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+    .feature { padding: 25px 25px 29px 0; }
+    .feature + .feature { padding-left: 25px; border-left: 1px solid var(--line); }
+    .feature-icon { width: 31px; height: 31px; margin-bottom: 22px; color: var(--orange-deep); }
+    .feature h3 { margin-bottom: 8px; font: 600 19px/1.2 "Barlow", sans-serif; }
+    .feature p { margin-bottom: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
+    .brief-band { background: var(--blue-deep); color: var(--sheet); border-top: 1px solid var(--blue-deep); border-bottom: 1px solid var(--blue-deep); }
+    .brief-band .section { border-top: 0; }
+    .brief-band .section-head p { color: #c6dbe3; }
+    .brief-band .folio { color: #a9c6d2; }
+    .record-list { margin: 0; border-top: 1px solid rgba(247, 251, 252, .32); }
+    .record { display: grid; grid-template-columns: minmax(125px, .32fr) 1fr; gap: 26px; padding: 18px 0; border-bottom: 1px solid rgba(247, 251, 252, .22); }
+    .record dt { color: var(--orange); font: 600 13px/1.35 "Barlow", sans-serif; }
+    .record dd { margin: 0; max-width: 69ch; color: #d9e7ec; font-size: 16px; }
+    .trade-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+    .trade { padding: 19px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font: 600 19px/1.2 "Barlow", sans-serif; }
+    .trade:nth-child(3n + 1) { background: rgba(247, 251, 252, .35); }
+    .how-section { background: var(--ink); color: var(--sheet); border-top: 1px solid var(--ink); }
+    .how-section .section { border-top: 0; }
+    .how-section .folio { color: #a9c6d2; }
+    .how-section .section-head p { color: #c6dbe3; }
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 36px; }
+    .step { padding-top: 17px; border-top: 3px solid var(--orange); }
+    .step-number { display: block; margin-bottom: 19px; color: var(--orange); font: 600 12px/1 "Barlow", sans-serif; letter-spacing: .1em; }
+    .step h3 { margin-bottom: 8px; color: var(--sheet); font: 600 22px/1.15 "Barlow", sans-serif; }
+    .step p { margin: 0; color: #bcd0d8; font-size: 15px; }
+    .plans-section .section-head { max-width: 690px; }
+    .plan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 23px; align-items: start; }
+    .plan { position: relative; border: 2px solid var(--ink); background: var(--sheet); padding: 28px 27px 27px; }
+    .plan::before { content: attr(data-tab); position: absolute; top: -1px; left: -1px; padding: 7px 12px 6px; background: var(--orange); color: var(--ink); font: 600 10px/1 "Barlow", sans-serif; letter-spacing: .13em; text-transform: uppercase; }
+    .plan--territory { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
+    .plan--territory::before { background: var(--sheet); }
+    .plan-head { display: flex; justify-content: space-between; gap: 20px; align-items: baseline; padding-top: 17px; }
+    .plan h3 { margin: 0; font: 700 35px/.95 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.01em; }
+    .price { margin: 0; font: 700 43px/.9 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.02em; white-space: nowrap; }
+    .price small { font: 500 12px/1 "Barlow", sans-serif; letter-spacing: 0; }
+    .plan-copy { min-height: 53px; margin: 13px 0 22px; color: var(--muted); font-size: 15px; }
+    .plan--territory .plan-copy { color: #bcd0d8; }
+    .plan ul { margin: 0 0 27px; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+    .plan--territory ul { border-color: rgba(247, 251, 252, .25); }
+    .plan li { position: relative; padding: 11px 0 11px 18px; border-bottom: 1px solid var(--line); font-size: 15px; }
+    .plan--territory li { border-color: rgba(247, 251, 252, .2); }
+    .plan li::before { content: ""; position: absolute; left: 0; top: 19px; width: 7px; height: 7px; background: var(--orange); }
+    .plan .button { width: 100%; box-shadow: none; }
+    .plan .button:hover { transform: none; background: var(--blue); }
+    .plan--territory .button { background: var(--orange); border-color: var(--orange); color: var(--ink); }
+    .plan--territory .button:hover { background: var(--sheet); border-color: var(--sheet); color: var(--ink); }
+    .plan-note { margin: 18px 0 0; color: var(--muted); font-size: 12px; }
+    .faq-layout { display: grid; grid-template-columns: .78fr 1.22fr; gap: clamp(30px, 7vw, 95px); }
+    .faq-layout .section-head { margin-bottom: 0; }
+    .faq-list { border-top: 1px solid var(--ink); }
+    .faq-list details { border-bottom: 1px solid var(--line); }
+    .faq-list summary { position: relative; padding: 18px 34px 18px 0; cursor: pointer; font: 600 18px/1.3 "Barlow", sans-serif; list-style: none; }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after { content: "+"; position: absolute; right: 0; top: 14px; color: var(--orange-deep); font: 400 25px/1 "Barlow", sans-serif; }
+    .faq-list details[open] summary::after { content: "−"; }
+    .faq-list details p { max-width: 62ch; margin: -3px 0 20px; color: var(--muted); font-size: 15px; }
+    .contact-section { background: var(--blue); color: var(--sheet); border-top: 1px solid var(--blue); }
+    .contact-section .section { border-top: 0; }
+    .contact-section h2 { max-width: 830px; margin: 0 0 15px; color: var(--sheet); font: 700 clamp(42px, 6.5vw, 74px)/.9 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: -.02em; }
+    .contact-section p { max-width: 56ch; margin-bottom: 24px; color: #d4e5eb; font-size: 18px; }
+    .contact-link { display: inline-block; color: var(--orange); font: 600 20px/1.2 "Barlow", sans-serif; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+    .contact-link:hover { color: var(--sheet); }
+    .legal-section { background: var(--paper); }
+    .legal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .legal-grid h2 { margin-bottom: 9px; font: 600 18px/1.2 "Barlow", sans-serif; }
+    .legal-grid p { margin-bottom: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .site-footer { border-top: 1px solid var(--ink); background: var(--ink); color: var(--sheet); }
+    .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 18px; padding: 22px 0; font-size: 12px; }
+    .footer-inner p { margin: 0; color: #b8cbd3; }
+    .footer-inner nav { display: flex; gap: 18px; }
+    .footer-inner a { color: var(--sheet); text-decoration: none; }
+    .footer-inner a:hover { color: var(--orange); }
+    @keyframes sheet-in {
+      from { opacity: 0; transform: translateY(18px) rotate(2.4deg); }
+      to { opacity: 1; transform: translateY(0) rotate(1.1deg); }
+    }
+    @keyframes stamp-in {
+      from { opacity: 0; transform: rotate(-4deg) scale(1.5); }
+      to { opacity: .88; transform: rotate(-12deg) scale(1); }
+    }
+    @media (max-width: 850px) {
+      .hero { grid-template-columns: 1fr; gap: 48px; }
+      .plan-wrap { max-width: 500px; padding-right: 13px; }
+      .brief-card { transform: none; animation: none; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .feature, .feature + .feature { padding: 20px 0 23px; border-left: 0; border-bottom: 1px solid var(--line); }
+      .feature:last-child { border-bottom: 0; }
+      .how-grid { grid-template-columns: 1fr; gap: 24px; }
+      .plan-grid, .faq-layout, .legal-grid { grid-template-columns: 1fr; }
+      .faq-layout { gap: 32px; }
+      .trade-grid { grid-template-columns: repeat(2, 1fr); }
+      .trade:last-child { grid-column: 1 / -1; }
+      .trade:nth-child(3n + 1) { background: transparent; }
+      .trade:nth-child(odd) { background: rgba(247, 251, 252, .35); }
+    }
+    @media (max-width: 650px) {
+      .site-nav { gap: 0; }
+      .site-nav a:not(.nav-cta) { display: none; }
+      .header-inner { min-height: 62px; }
+      .site-nav .nav-cta { padding: 9px 11px; font-size: 12px; }
+      h1 { font-size: clamp(52px, 16vw, 76px); }
+      .brief-fields { grid-template-columns: 1fr 1fr; }
+      .stamp { right: 12px; bottom: 55px; font-size: 22px; }
+      .folio { position: static; margin-bottom: 12px; }
+      .record { grid-template-columns: 1fr; gap: 4px; }
+      .trade { font-size: 16px; }
+      .plan-head { display: block; }
+      .price { margin-top: 7px; }
+      .plan-copy { min-height: 0; }
+      .footer-inner { display: block; }
+      .footer-inner nav { margin-top: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .brief-card, .stamp { animation: none; }
+      .button { transition: none; }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Akros Systems",
+      "url": "https://tipoff-brief.github.io/",
+      "email": "abdul321@gmail.com",
+      "brand": { "@type": "Brand", "name": "Tipoff" }
+    }
+  </script>
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="#top" aria-label="Akros Systems home">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+          <rect width="40" height="40" fill="#0d2635"/>
+          <path d="M7 29 20 9l13 20" fill="none" stroke="#f05a28" stroke-width="3.2"/>
+          <path d="M13 29h14" stroke="#f7fbfc" stroke-width="2.6"/>
+        </svg>
+        <span class="brand-name">Akros Systems<span>Tipoff / permit briefs</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#brief">The brief</a>
+        <a href="#how">How it works</a>
+        <a href="#plans">Plans</a>
+        <a class="nav-cta" href="mailto:abdul321@gmail.com?subject=Tipoff%20inquiry">Ask about Tipoff</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="wrap">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="category">Permit intelligence for home-service contractors</p>
+          <h1 id="hero-title">See the job before it goes out to bid.</h1>
+          <p class="hero-lede">Tipoff turns new residential building permits into a weekly brief for your trade and ZIP codes, so you can reach homeowners while the project is still being planned.</p>
+          <div class="hero-actions">
+            <a class="button" href="mailto:abdul321@gmail.com?subject=Tipoff%20Report">Start with a Report</a>
+            <a class="text-link" href="#how">See how it works ↓</a>
+          </div>
+          <p class="hero-note">Built from public city and county permit records. Filtered by trade and ZIP.</p>
+        </div>
+
+        <div class="plan-wrap">
+          <p class="sheet-label">Sample route sheet</p>
+          <article class="brief-card" aria-label="Sample Tipoff weekly brief">
+            <div class="brief-top"><span>Tipoff / weekly brief</span><span>Sample</span></div>
+            <div class="brief-body">
+              <p class="brief-kicker">New residential permit</p>
+              <h2>Reroof / tear-off and replacement</h2>
+              <dl class="brief-fields">
+                <div><dt>Trade</dt><dd>Roofing</dd></div>
+                <div><dt>ZIP</dt><dd>02139</dd></div>
+                <div><dt>Filed</dt><dd>This week</dd></div>
+                <div><dt>Property</dt><dd>Single-family, 2 story</dd></div>
+              </dl>
+              <div class="brief-foot">
+                <p>Property and job details come from the public permit record.</p>
+                <span class="stamp" aria-label="Sample">SAMPLE</span>
+              </div>
+            </div>
+          </article>
+          <p class="brief-caption">Illustrative brief. Your report is filtered to the trade and ZIP codes you choose.</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="rule"></div>
+
+    <div class="wrap">
+      <section class="section" id="brief" aria-labelledby="brief-title">
+        <p class="folio">Sheet 01 / The brief</p>
+        <div class="section-head">
+          <h2 id="brief-title">A short list of jobs that are still early.</h2>
+          <p>Most contractors hear about a project when the homeowner is already collecting bids. A residential permit is filed earlier, while the work is being planned. Tipoff reads those public filings and sends you the ones that fit your trade and service area.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 5h20v22H6zM10 10h12M10 15h12M10 20h7" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <h3>Public records in</h3>
+            <p>We read residential building-permit records published by city and county open-data portals.</p>
+          </article>
+          <article class="feature">
+            <svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M16 4 27 11v10L16 28 5 21V11z" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m11 16 3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <h3>Your trade and ZIPs</h3>
+            <p>You choose the work you do and the areas you cover. The brief is filtered to both.</p>
+          </article>
+          <article class="feature">
+            <svg class="feature-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M5 8h22v17H5zM9 13h14M9 18h9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="m21 24 3 3 4-6" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <h3>A weekly brief out</h3>
+            <p>Every week, you get the newest matching permits with the property and job details.</p>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <div class="brief-band">
+      <div class="wrap">
+        <section class="section" aria-labelledby="inside-title">
+          <p class="folio">Sheet 02 / Inside the brief</p>
+          <div class="section-head">
+            <h2 id="inside-title">Enough detail to decide who to call.</h2>
+            <p>The brief arrives in your inbox with the facts that are in the public record.</p>
+          </div>
+          <dl class="record-list">
+            <div class="record"><dt>The permit</dt><dd>Job type and filed scope, so you can tell a reroof from a new addition.</dd></div>
+            <div class="record"><dt>The property</dt><dd>Address and property details included in the permit record.</dd></div>
+            <div class="record"><dt>The fit</dt><dd>Only permits that match your trade and ZIP codes.</dd></div>
+            <div class="record"><dt>The next step</dt><dd>A short list you can work through in one sitting.</dd></div>
+          </dl>
+        </section>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="section" aria-labelledby="trades-title">
+        <p class="folio">Sheet 03 / Trades</p>
+        <div class="section-head">
+          <h2 id="trades-title">Built for the trades that start after the permit.</h2>
+          <p>If your work is triggered by a residential building permit, Tipoff can be filtered around it.</p>
+        </div>
+        <div class="trade-grid" aria-label="Trades covered">
+          <div class="trade">Solar</div>
+          <div class="trade">HVAC</div>
+          <div class="trade">Roofing</div>
+          <div class="trade">Electrical</div>
+          <div class="trade">Pool</div>
+          <div class="trade">Landscaping</div>
+          <div class="trade">Fencing</div>
+          <div class="trade">Insulation</div>
+          <div class="trade">Remodeling</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="how-section">
+      <div class="wrap">
+        <section class="section" id="how" aria-labelledby="how-title">
+          <p class="folio">Sheet 04 / How it works</p>
+          <div class="section-head">
+            <h2 id="how-title">From public record to your inbox.</h2>
+            <p>One weekly routine, built around the areas you already work.</p>
+          </div>
+          <div class="how-grid">
+            <article class="step">
+              <span class="step-number">01</span>
+              <h3>We read the filings.</h3>
+              <p>We collect public residential permit records from participating city and county portals.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">02</span>
+              <h3>You set the filter.</h3>
+              <p>Tell us your trade and the ZIP codes you cover. Territory customers reserve those areas.</p>
+            </article>
+            <article class="step">
+              <span class="step-number">03</span>
+              <h3>You get the brief.</h3>
+              <p>The newest matching permits arrive by email each week, ready to review and route.</p>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <section class="section plans-section" id="plans" aria-labelledby="plans-title">
+        <p class="folio">Sheet 05 / Plans</p>
+        <div class="section-head">
+          <h2 id="plans-title">Choose the coverage that fits the route.</h2>
+          <p>Both plans are monthly. We confirm coverage, trade and ZIPs before billing.</p>
+        </div>
+        <div class="plan-grid">
+          <article class="plan" data-tab="Report">
+            <div class="plan-head"><h3>Report</h3><p class="price">$297<small> / month</small></p></div>
+            <p class="plan-copy">A weekly permit brief for one trade and your service area.</p>
+            <ul>
+              <li>Weekly email brief</li>
+              <li>Trade and ZIP-code filtering</li>
+              <li>Property and job details</li>
+              <li>Newest matching permits</li>
+            </ul>
+            <a class="button" href="mailto:abdul321@gmail.com?subject=Tipoff%20Report">Ask about Report</a>
+          </article>
+          <article class="plan plan--territory" data-tab="Territory">
+            <div class="plan-head"><h3>Territory</h3><p class="price">From $697<small> / month</small></p></div>
+            <p class="plan-copy">The weekly brief plus an exclusive trade and ZIP territory.</p>
+            <ul>
+              <li>Everything in Report</li>
+              <li>Exclusive trade and ZIP territory</li>
+              <li>Weekly reports for the area</li>
+              <li>Optional postcard packs</li>
+            </ul>
+            <a class="button" href="mailto:abdul321@gmail.com?subject=Tipoff%20Territory">Ask about Territory</a>
+          </article>
+        </div>
+        <p class="plan-note">Territory pricing depends on the area. We confirm the scope before billing.</p>
+      </section>
+    </div>
+
+    <div class="wrap">
+      <section class="section" aria-labelledby="faq-title">
+        <div class="faq-layout">
+          <div class="section-head">
+            <p class="folio">Sheet 06 / Questions</p>
+            <h2 id="faq-title">Before you start.</h2>
+          </div>
+          <div class="faq-list">
+            <details>
+              <summary>Where do the permits come from?</summary>
+              <p>Tipoff collects public residential building-permit records from city and county open-data portals. Coverage varies by jurisdiction.</p>
+            </details>
+            <details>
+              <summary>What do I get each week?</summary>
+              <p>The newest matching permits for your trade and ZIP codes, with the property and job details included in the public record. The brief arrives by email.</p>
+            </details>
+            <details>
+              <summary>Can I choose my area?</summary>
+              <p>Yes. Report customers choose a trade and ZIP codes. Territory customers reserve an exclusive trade and ZIP combination, subject to availability.</p>
+            </details>
+            <details>
+              <summary>How do I start?</summary>
+              <p>Email your trade and the ZIP codes you cover. We’ll confirm coverage and the right plan before billing.</p>
+            </details>
+            <details>
+              <summary>Is this a guaranteed lead list?</summary>
+              <p>No. Tipoff is a research tool built from public permit filings. Records can be incomplete or delayed, and a permit does not guarantee a job or a homeowner response.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="contact-section">
+      <div class="wrap">
+        <section class="section" aria-labelledby="contact-title">
+          <h2 id="contact-title">Tell us your trade and ZIPs.</h2>
+          <p>We’ll confirm coverage and the right plan. No account setup required to ask.</p>
+          <a class="contact-link" href="mailto:abdul321@gmail.com?subject=Tipoff%20inquiry">abdul321@gmail.com</a>
+        </section>
+      </div>
+    </div>
+
+    <div class="legal-section">
+      <div class="wrap">
+        <section class="section" aria-label="Privacy and terms">
+          <div class="legal-grid">
+            <div id="privacy">
+              <h2>Privacy</h2>
+              <p>We use the information you send us only to respond to your inquiry and provide the service you request. We do not sell customer data.</p>
+            </div>
+            <div id="terms">
+              <h2>Terms</h2>
+              <p>Tipoff reports are provided for business lead research. Permit data comes from public records and may be incomplete or delayed. Subscription terms are confirmed before billing.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>© 2026 Akros Systems. Tipoff is a product of Akros Systems.</p>
+      <nav aria-label="Footer">
+        <a href="#brief">The brief</a>
+        <a href="#plans">Plans</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#terms">Terms</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
